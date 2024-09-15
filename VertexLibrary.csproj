@@ -1,6 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <RootNamespace>VertexLibrary</RootNamespace>
+        <AssemblyName>VertexLibrary</AssemblyName>
+        <Product>Vertex Library</Product>
+        <Version>0.0.1</Version>
+        <PackageLicenseExpression>LGPL-2.1+</PackageLicenseExpression>
         <TargetFramework>netstandard2.1</TargetFramework>
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
