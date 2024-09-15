@@ -17,4 +17,10 @@
         <Reference Include="$(SolutionDir)\Dependencies\UnityEngine.ParticleSystemModule.dll" Private="False"/>
     </ItemGroup>
 
+    <PropertyGroup>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>embedded</DebugType>
+        <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
+    </PropertyGroup>
+
 </Project>
