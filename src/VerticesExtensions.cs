@@ -17,25 +17,28 @@ public static class VerticesExtensions
     public static IVertexCache GlobalPartialCache { get; } = GlobalCache.AsPartial();
     public static event Action<LogType, Func<string>> logEvent;
 
+    // GameObject Extensions
 
-    //GameObject Extensions
     /// <summary>
-    /// Find the OOBB of this object
-    /// Optionally use the Override matrix to translate the result
+    /// Finds the oriented bounding box (OOBB) of the specified GameObject.
+    /// Optionally uses the <see cref="ExecutionOptions.OverrideMatrix"/> to translate the result.
     /// </summary>
-    /// <param name="executionOptions"></param> optional modifiers
-    /// <returns>the bounds encapsulating the object</returns>
+    /// <param name="target">The GameObject to process.</param>
+    /// <param name="executionOptions">Optional modifiers for the computation.</param>
+    /// <returns>The bounding box encapsulating the object.</returns>
     public static Bounds GetBounds(this GameObject target, ExecutionOptions executionOptions = default)
     {
         return GetBounds(target.transform, executionOptions);
     }
 
     /// <summary>
-    /// Find the OOBB of this object
-    /// Optionally use the Override matrix to translate the result
+    /// Tries to find the oriented bounding box (OOBB) of the specified GameObject.
+    /// Optionally uses the <see cref="ExecutionOptions.OverrideMatrix"/> to translate the result.
     /// </summary>
-    /// <param name="executionOptions"></param> optional modifiers
-    /// <returns>true if any vertex has been found, false otherwise</returns>
+    /// <param name="target">The GameObject to process.</param>
+    /// <param name="bounds">Out parameter to hold the resulting bounds if found.</param>
+    /// <param name="executionOptions">Optional modifiers for the computation.</param>
+    /// <returns><c>true</c> if any vertex has been found; otherwise, <c>false</c>.</returns>
     public static bool TryGetBounds(this GameObject target, out Bounds bounds,
         ExecutionOptions executionOptions = default)
     {
@@ -43,67 +46,74 @@ public static class VerticesExtensions
     }
 
     /// <summary>
-    /// Find the AABB of this object
-    /// the Override matrix will be ignored
+    /// Finds the axis-aligned bounding box (AABB) of the specified GameObject.
+    /// The <see cref="ExecutionOptions.OverrideMatrix"/> will be ignored in this calculation.
     /// </summary>
-    /// <param name="executionOptions"></param> optional modifiers
-    /// <returns>the bounds encapsulating the object</returns>
+    /// <param name="target">The GameObject to process.</param>
+    /// <param name="executionOptions">Optional modifiers for the computation.</param>
+    /// <returns>The axis-aligned bounding box encapsulating the object.</returns>
     public static Bounds GetWorldBounds(this GameObject target, ExecutionOptions executionOptions = default)
     {
         return GetWorldBounds(target.transform, executionOptions);
     }
 
     /// <summary>
-    /// Find the AABB of this object
-    /// the Override matrix will be ignored
+    /// Tries to find the axis-aligned bounding box (AABB) of the specified GameObject.
+    /// The <see cref="ExecutionOptions.OverrideMatrix"/> will be ignored in this calculation.
     /// </summary>
-    /// <param name="executionOptions"></param> optional modifiers
-    /// <returns>true if any vertex has been found, false otherwise</returns>
+    /// <param name="target">The GameObject to process.</param>
+    /// <param name="bounds">Out parameter to hold the resulting bounds if found.</param>
+    /// <param name="executionOptions">Optional modifiers for the computation.</param>
+    /// <returns><c>true</c> if any vertex has been found; otherwise, <c>false</c>.</returns>
     public static bool TryGetWorldBounds(this GameObject target, out Bounds bounds,
         ExecutionOptions executionOptions = default)
     {
         return TryGetWorldBounds(target.transform, out bounds, executionOptions);
     }
-    
+
     /// <summary>
-    /// compute the largest distance from the bounding box center
-    /// the Override matrix will be ignored
+    /// Computes the largest distance from the bounding box center for the specified GameObject.
+    /// The <see cref="ExecutionOptions.OverrideMatrix"/> will be ignored in this calculation.
     /// </summary>
-    /// <param name="executionOptions"></param> optional modifiers
-    /// <returns>largest distance from the bounding box center</returns>
+    /// <param name="target">The GameObject to process.</param>
+    /// <param name="executionOptions">Optional modifiers for the computation.</param>
+    /// <returns>The largest distance from the bounding box center.</returns>
     public static float GetRadius(this GameObject target, ExecutionOptions executionOptions = default)
     {
         return GetRadius(target.transform, executionOptions);
     }
 
     /// <summary>
-    /// Obtain all the vertexes of the object in local space
-    /// Optionally use the Override matrix to translate the result
+    /// Obtains all the vertices of the specified GameObject in local space.
+    /// Optionally uses the <see cref="ExecutionOptions.OverrideMatrix"/> to translate the result.
     /// </summary>
-    /// <param name="executionOptions"></param> optional modifiers
-    /// <returns>all the vertexes found</returns>
+    /// <param name="target">The GameObject to process.</param>
+    /// <param name="executionOptions">Optional modifiers for the computation.</param>
+    /// <returns>All the vertices found in local space.</returns>
     public static Vector3[] GetVertexes(this GameObject target, ExecutionOptions executionOptions = default)
     {
         return GetVertexes(target.transform, executionOptions);
     }
-    
+
     /// <summary>
-    /// Pre-Fill the cache from <param name="executionOptions"></param>
+    /// Pre-fills the cache with vertex data from the specified GameObject using the given <see cref="ExecutionOptions.VertexCache"/>.
     /// </summary>
-    /// <param name="executionOptions"></param> optional modifiers and the cache to be filled
-    public static void CacheVertexes(GameObject tartgetObject, ExecutionOptions executionOptions)
+    /// <param name="target">The GameObject whose vertex data should be cached.</param>
+    /// <param name="executionOptions">Optional modifiers and the cache to be filled.</param>
+    public static void CacheVertexes(GameObject target, ExecutionOptions executionOptions)
     {
-        CacheVertexes(tartgetObject.transform, executionOptions);
+        CacheVertexes(target.transform, executionOptions);
     }
 
     //Transform Extensions
     
     /// <summary>
-    /// Find the OOBB of this object
-    /// Optionally use the Override matrix to translate the result
+    /// Finds the oriented bounding box (OOBB) of the specified GameObject.
+    /// Optionally uses the <see cref="ExecutionOptions.OverrideMatrix"/> to translate the result.
     /// </summary>
-    /// <param name="executionOptions"></param> optional modifiers
-    /// <returns>the bounds encapsulating the object</returns>
+    /// <param name="target">The Transform to process.</param>
+    /// <param name="executionOptions">Optional modifiers for the computation.</param>
+    /// <returns>The bounding box encapsulating the object.</returns>
     public static Bounds GetBounds(this Transform target, ExecutionOptions executionOptions = default)
     {
         logEvent += executionOptions.LogHandler;
@@ -117,7 +127,7 @@ public static class VerticesExtensions
 
             var vertexes = ListPool<Vector3>.Get();
 
-            var matrix = executionOptions.OverrideMatrix ?? Matrix4x4.identity;
+            var matrix = executionOptions.OverrideMatrix;
 
             target.GetChildVertexes(vertexes, matrix, "", executionOptions, Logfunc);
             var bounds = GetBounds(vertexes);
@@ -131,11 +141,13 @@ public static class VerticesExtensions
     }
 
     /// <summary>
-    /// Find the OOBB of this object
-    /// Optionally use the Override matrix to translate the result
+    /// Tries to find the oriented bounding box (OOBB) of the specified GameObject.
+    /// Optionally uses the <see cref="ExecutionOptions.OverrideMatrix"/> to translate the result.
     /// </summary>
-    /// <param name="executionOptions"></param> optional modifiers
-    /// <returns>true if any vertex has been found, false otherwise</returns>
+    /// <param name="target">The Transform to process.</param>
+    /// <param name="bounds">Out parameter to hold the resulting bounds if found.</param>
+    /// <param name="executionOptions">Optional modifiers for the computation.</param>
+    /// <returns><c>true</c> if any vertex has been found; otherwise, <c>false</c>.</returns>
     public static bool TryGetBounds(this Transform target, out Bounds bounds,
         ExecutionOptions executionOptions = default)
     {
@@ -144,11 +156,12 @@ public static class VerticesExtensions
     }
 
     /// <summary>
-    /// Find the AABB of this object
-    /// the Override matrix will be ignored
+    /// Finds the axis-aligned bounding box (AABB) of the specified GameObject.
+    /// The <see cref="ExecutionOptions.OverrideMatrix"/> will be ignored in this calculation.
     /// </summary>
-    /// <param name="executionOptions"></param> optional modifiers
-    /// <returns>the bounds encapsulating the object</returns>
+    /// <param name="target">The Transform to process.</param>
+    /// <param name="executionOptions">Optional modifiers for the computation.</param>
+    /// <returns>The axis-aligned bounding box encapsulating the object.</returns>
     public static Bounds GetWorldBounds(this Transform target, ExecutionOptions executionOptions = default)
     {
         logEvent += executionOptions.LogHandler;
@@ -176,11 +189,13 @@ public static class VerticesExtensions
     }
     
     /// <summary>
-    /// Find the AABB of this object
-    /// the Override matrix will be ignored
+    /// Tries to find the axis-aligned bounding box (AABB) of the specified GameObject.
+    /// The <see cref="ExecutionOptions.OverrideMatrix"/> will be ignored in this calculation.
     /// </summary>
-    /// <param name="executionOptions"></param> optional modifiers
-    /// <returns>true if any vertex has been found, false otherwise</returns>
+    /// <param name="target">The Transform to process.</param>
+    /// <param name="bounds">Out parameter to hold the resulting bounds if found.</param>
+    /// <param name="executionOptions">Optional modifiers for the computation.</param>
+    /// <returns><c>true</c> if any vertex has been found; otherwise, <c>false</c>.</returns>
     public static bool TryGetWorldBounds(this Transform target, out Bounds bounds,
         ExecutionOptions executionOptions = default)
     {
@@ -189,11 +204,12 @@ public static class VerticesExtensions
     }
     
     /// <summary>
-    /// compute the largest distance from the bounding box center
-    /// the Override matrix will be ignored
+    /// Computes the largest distance from the bounding box center for the specified GameObject.
+    /// The <see cref="ExecutionOptions.OverrideMatrix"/> will be ignored in this calculation.
     /// </summary>
-    /// <param name="executionOptions"></param> optional modifiers
-    /// <returns>largest distance from the bounding box center</returns>
+    /// <param name="target">The Transform to process.</param>
+    /// <param name="executionOptions">Optional modifiers for the computation.</param>
+    /// <returns>The largest distance from the bounding box center.</returns>
     public static float GetRadius(this Transform target, ExecutionOptions executionOptions = default)
     {
         logEvent += executionOptions.LogHandler;
@@ -225,11 +241,12 @@ public static class VerticesExtensions
     }
 
     /// <summary>
-    /// Obtain all the vertexes of the object in local space
-    /// Optionally use the Override matrix to translate the result
+    /// Obtains all the vertices of the specified GameObject in local space.
+    /// Optionally uses the <see cref="ExecutionOptions.OverrideMatrix"/> to translate the result.
     /// </summary>
-    /// <param name="executionOptions"></param> optional modifiers
-    /// <returns>all the vertexes found</returns>
+    /// <param name="target">The Transform to process.</param>
+    /// <param name="executionOptions">Optional modifiers for the computation.</param>
+    /// <returns>All the vertices found in local space.</returns>
     public static Vector3[] GetVertexes(this Transform target, ExecutionOptions executionOptions = default)
     {
         logEvent += executionOptions.LogHandler;
@@ -243,7 +260,7 @@ public static class VerticesExtensions
 
             var vertexes = ListPool<Vector3>.Get();
 
-            var matrix = executionOptions.OverrideMatrix ?? Matrix4x4.identity;
+            var matrix = executionOptions.OverrideMatrix;
 
             target.GetChildVertexes(vertexes, matrix, "", executionOptions, Logfunc);
             var output = vertexes.ToArray();
@@ -257,9 +274,10 @@ public static class VerticesExtensions
     }
     
     /// <summary>
-    /// Pre-Fill the cache from <param name="executionOptions"></param>
+    /// Pre-fills the cache with vertex data from the specified GameObject using the given <see cref="ExecutionOptions.VertexCache"/>.
     /// </summary>
-    /// <param name="executionOptions"></param> optional modifiers and the cache to be filled
+    /// <param name="target">The GameObject whose vertex data should be cached.</param>
+    /// <param name="executionOptions">Optional modifiers and the cache to be filled.</param>
     public static void CacheVertexes(this Transform target, ExecutionOptions executionOptions = default)
     {
         if (executionOptions.VertexCache == null)
@@ -271,9 +289,10 @@ public static class VerticesExtensions
     // Utility Extensions
 
     /// <summary>
-    /// Get bounds encapsulating all <param name="vertexes"></param>
+    /// Calculates the bounding box that encapsulates all the specified vertices.
     /// </summary>
-    /// <returns>bounds encapsulating all <param name="vertexes"></param></returns>
+    /// <param name="vertexes">The collection of vertices to encapsulate.</param>
+    /// <returns>The bounding box that encompasses all the specified vertices.</returns>
     public static Bounds GetBounds(this IEnumerable<Vector3> vertexes)
     {
         var bounds = new Bounds();
@@ -283,10 +302,11 @@ public static class VerticesExtensions
     }
 
     /// <summary>
-    /// Get the farthest point from <param name="origin"></param>
+    /// Finds the farthest point from the specified origin among the given vertices.
     /// </summary>
-    /// <param name="vertexes"></param>
-    /// <returns>farthest point from <param name="origin"></param> and relative numeric distance</returns>
+    /// <param name="vertexes">The collection of vertices to analyze.</param>
+    /// <param name="origin">The reference point from which distances are measured. Defaults to <see cref="Vector3.zero"/> if not specified.</param>
+    /// <returns>A tuple containing the farthest point from the origin and the relative distance to that point.</returns>
     public static (Vector3? point, float distance) GetFarthestPoint(this IEnumerable<Vector3> vertexes,
         Vector3 origin = default)
     {
@@ -304,6 +324,7 @@ public static class VerticesExtensions
 
         return (found, max);
     }
+
 
     //INTERNAL
     
