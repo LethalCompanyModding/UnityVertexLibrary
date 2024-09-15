@@ -50,6 +50,6 @@ public struct ExecutionOptions
     /// <summary>
     /// Cache used to speed up computation. If <value>null</value> no cache will be used.
     /// </summary>
-    public IVertexCache VertexCache { get; set; } = VerticesExtensions.GlobalPartialCache;
+    public IVertexCache VertexCache { get; set; } = VertexesExtensions.GlobalPartialCache;
 
 }

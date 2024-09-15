@@ -33,7 +33,7 @@ using Object = UnityEngine.Object;
 
 namespace VertexLibrary;
 
-public static class VerticesExtensions
+public static class VertexesExtensions
 {
     public static IVertexCache GlobalCache { get; } = IVertexCache.CreateCache(false);
     public static IVertexCache GlobalPartialCache { get; } = GlobalCache.AsPartial();
