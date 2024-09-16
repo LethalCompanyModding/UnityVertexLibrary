@@ -361,11 +361,11 @@ public static class VertexesExtensions
     private static void GetChildVertexes(this Transform target, List<Vector3> outVertices, Matrix4x4 localMatrix,
         string path, ExecutionOptions executionOptions, Func<List<Vector3>, string> logFunc)
     {
-        logEvent?.Invoke(LogType.Log, () => $"Processing {path}/{target.name}");
+        logEvent?.Invoke(LogType.Debug1, () => $"Processing {path}/{target.name}");
 
         if (executionOptions.FilteredComponents?.Any(c => target.TryGetComponent(c, out _)) ?? false)
         {
-            logEvent?.Invoke(LogType.Log, () => $"Skipping {path}/{target.name}!");
+            logEvent?.Invoke(LogType.Debug2, () => $"Skipping {path}/{target.name}!");
             return;
         }
 
@@ -373,7 +373,7 @@ public static class VertexesExtensions
         {
             if ((executionOptions.CullingMask & 1 << target.gameObject.layer) == 0)
             {
-                logEvent?.Invoke(LogType.Log, () => $"Ignoring {path}/{target.name} by the culling mask: {target.gameObject.layer}");
+                logEvent?.Invoke(LogType.Debug2, () => $"Ignoring {path}/{target.name} by the culling mask: {target.gameObject.layer}");
             }
             else
             {
@@ -442,7 +442,7 @@ public static class VertexesExtensions
                                 if (executionOptions.VertexCache != null &&
                                     executionOptions.VertexCache.TryGetValue(mesh, out var cached))
                                 {
-                                    logEvent?.Invoke(LogType.Log,
+                                    logEvent?.Invoke(LogType.Debug3,
                                         () => $"Cache hit {path}/{target.name} renderer {renderer.GetType().Name}");
                                     rVertices.AddRange(cached);
                                 }
@@ -475,7 +475,7 @@ public static class VertexesExtensions
                             }
                         }
 
-                        logEvent?.Invoke(LogType.Log,
+                        logEvent?.Invoke(LogType.Debug1,
                             () =>
                                 $"Processing {path}/{target.name} renderer {renderer.GetType().Name} {logFunc?.Invoke(rVertices)}");
 
@@ -501,18 +501,18 @@ public static class VertexesExtensions
             outVertices.AddRange(vertexes.Select(localMatrix.MultiplyPoint3x4));
         }
 
-        logEvent?.Invoke(LogType.Log, () => $"Found {path}/{target.name} {logFunc?.Invoke(outVertices)}");
+        logEvent?.Invoke(LogType.Debug1, () => $"Completed {path}/{target.name} {logFunc?.Invoke(outVertices)}");
     }
 
     
     
     private static void CacheChildVertexes(this Transform target, string path, ExecutionOptions executionOptions)
     {
-        logEvent?.Invoke(LogType.Log, () => $"Caching {path}/{target.name}");
+        logEvent?.Invoke(LogType.Debug1, () => $"Caching {path}/{target.name}");
 
         if (executionOptions.FilteredComponents?.Any(c => target.TryGetComponent(c, out _)) ?? false)
         {
-            logEvent?.Invoke(LogType.Log, () => $"Skipping {path}/{target.name}!");
+            logEvent?.Invoke(LogType.Debug2, () => $"Skipping {path}/{target.name}!");
             return;
         }
 
@@ -581,7 +581,7 @@ public static class VertexesExtensions
             }
 
 
-            logEvent?.Invoke(LogType.Log, () => $"Caching {path}/{target.name} renderer {renderer.GetType().Name}");
+            logEvent?.Invoke(LogType.Debug1, () => $"Caching {path}/{target.name} renderer {renderer.GetType().Name}");
 
             foreach (Transform child in target.transform)
                 CacheChildVertexes(child, path + "/" + target.name, executionOptions);
@@ -655,7 +655,7 @@ public static class VertexesExtensions
                 using (ListPool<Vector3>.Get(out var tmp))
                 {
                     meshCopy.GetVertices(tmp);
-                    logEvent?.Invoke(LogType.Log, () => $"Cached {tmp.Count} vertexes for {nonReadableMesh}");
+                    logEvent?.Invoke(LogType.Debug1, () => $"Cached {tmp.Count} vertexes for {nonReadableMesh}");
                     executionOptions.VertexCache[cacheKey != null ? cacheKey : nonReadableMesh] = tmp.ToArray();
                 }
 
@@ -672,7 +672,7 @@ public static class VertexesExtensions
         using (ListPool<Vector3>.Get(out var tmp))
         {
             readableMesh.GetVertices(tmp);
-            logEvent?.Invoke(LogType.Log, () => $"Cached {tmp.Count} vertexes for {readableMesh}");
+            logEvent?.Invoke(LogType.Debug1, () => $"Cached {tmp.Count} vertexes for {readableMesh}");
             executionOptions.VertexCache[cacheKey != null ? cacheKey : readableMesh] = tmp.ToArray();
         }
     }
