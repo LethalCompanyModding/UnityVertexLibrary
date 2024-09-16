@@ -28,12 +28,6 @@
     </ItemGroup>-->
 
     <PropertyGroup>
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>embedded</DebugType>
-        <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
-    </PropertyGroup>
-
-    <PropertyGroup>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
