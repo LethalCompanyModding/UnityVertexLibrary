@@ -5,6 +5,6 @@ namespace VertexLibrary;
 /// <summary>
 /// </summary>
 //TODO: update with actual version and reverse DNS
-[BepInPlugin("VertexLibrary", "VertexLibrary", "0.0.1")]
+[BepInPlugin(GUID: LCMPluginInfo.PLUGIN_GUID, Name: LCMPluginInfo.PLUGIN_NAME, Version: LCMPluginInfo.PLUGIN_VERSION)]
 public class Plugin : BaseUnityPlugin
-{}
+{ }
