@@ -26,7 +26,7 @@ namespace VertexLibrary.Caches;
 
 internal class FullVertexCache : IVertexCache
 {
-    private IVertexCache _complementaryCache;
+    private IVertexCache? _complementaryCache;
 
     public FullVertexCache()
     {
