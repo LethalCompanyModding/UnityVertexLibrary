@@ -1,13 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RootNamespace>VertexLibrary</RootNamespace>
-        <AssemblyName>VertexLibrary</AssemblyName>
-        <Product>Vertex Library</Product>
+        <AssemblyName>com.github.lethalcompanymodding.vertexlibrary</AssemblyName>
+        <Product>VertexLibrary</Product>
         <Version>0.0.1</Version>
         <PackageLicenseExpression>LGPL-2.1+</PackageLicenseExpression>
         <TargetFramework>netstandard2.1</TargetFramework>
         <LangVersion>latest</LangVersion>
+        <ProjectDepsFileName>$(Product).deps.json</ProjectDepsFileName>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/LethalCompanyModding/UnityVertexLibrary</RepositoryUrl>
+        <RootNamespace>$(Product)</RootNamespace>
+        <TargetName>$(Product)</TargetName>
     </PropertyGroup>
 
     <ItemGroup>
