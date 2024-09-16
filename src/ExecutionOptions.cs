@@ -26,9 +26,12 @@ using VertexLibrary.Caches;
 // ReSharper disable CollectionNeverUpdated.Global
 
 namespace VertexLibrary;
-
+/// <summary>
+/// </summary>
 public struct ExecutionOptions
 {
+    /// <summary>
+    /// </summary>
     public ExecutionOptions()
     {}
 
@@ -36,6 +39,11 @@ public struct ExecutionOptions
     /// Function to process logs from the library.
     /// </summary>
     public Action<LogType, Func<string>> LogHandler { get; set; } = null;
+
+    /// <summary>
+    /// Culling mask used to filter out Renderers
+    /// </summary>
+    public int CullingMask { get; set; } = ~0;
 
     /// <summary>
     /// Set of Unity component types that, if present on a GameObject, will cause it to be skipped.

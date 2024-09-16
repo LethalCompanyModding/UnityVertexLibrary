@@ -23,7 +23,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace VertexLibrary.Caches;
-
+/// <summary>
+/// </summary>
 public interface IVertexCache
 {
     /// <summary>

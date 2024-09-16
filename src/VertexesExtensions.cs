@@ -33,10 +33,18 @@ using Object = UnityEngine.Object;
 
 namespace VertexLibrary;
 
+/// <summary>
+/// </summary>
 public static class VertexesExtensions
 {
+    /// <summary>
+    /// </summary>
     public static IVertexCache GlobalCache { get; } = IVertexCache.CreateCache(false);
+    /// <summary>
+    /// </summary>
     public static IVertexCache GlobalPartialCache { get; } = GlobalCache.AsPartial();
+    /// <summary>
+    /// </summary>
     public static event Action<LogType, Func<string>> logEvent;
 
     // GameObject Extensions
@@ -361,112 +369,119 @@ public static class VertexesExtensions
             return;
         }
 
-        using var pooledRenderers = ListPool<Renderer>.Get(out var renderers);
-        target.GetComponents(renderers);
-
         using (ListPool<Vector3>.Get(out var vertexes))
         {
-            foreach (var renderer in renderers.Where(r => r.enabled))
-                using (ListPool<Vector3>.Get(out var rVertices))
-                {
-                    switch (renderer)
+            if ((executionOptions.CullingMask & 1 << target.gameObject.layer) == 0)
+            {
+                logEvent?.Invoke(LogType.Log, () => $"Ignoring {path}/{target.name} by the culling mask: {target.gameObject.layer}");
+            }
+            else
+            {
+                using var pooledRenderers = ListPool<Renderer>.Get(out var renderers);
+                target.GetComponents(renderers);
+
+                foreach (var renderer in renderers.Where(r => r.enabled))
+                    using (ListPool<Vector3>.Get(out var rVertices))
                     {
-                        case SkinnedMeshRenderer skinnedMeshRenderer:
+                        switch (renderer)
                         {
-                            var mesh = skinnedMeshRenderer.sharedMesh;
-                            if (mesh == null)
+                            case SkinnedMeshRenderer skinnedMeshRenderer:
                             {
-                                logEvent?.Invoke(LogType.Warning,
-                                    () => $"{renderer.GetType()} in {path} is missing a mesh");
-                                continue;
-                            }
+                                var mesh = skinnedMeshRenderer.sharedMesh;
+                                if (mesh == null)
+                                {
+                                    logEvent?.Invoke(LogType.Warning,
+                                        () => $"{renderer.GetType()} in {path} is missing a mesh");
+                                    continue;
+                                }
 
-                            if (executionOptions.VertexCache is { IgnoreSkinnedRenders: false } &&
-                                executionOptions.VertexCache.TryGetValue(mesh, out var cached))
-                            {
-                                logEvent?.Invoke(LogType.Warning,
-                                    () => $"Cache hit {path}/{target.name} renderer {renderer.GetType().Name}");
-                                rVertices.AddRange(cached);
-                            }
-                            else
-                            {
-                                var tmpMesh = new Mesh();
-
-                                skinnedMeshRenderer.BakeMesh(tmpMesh, true);
-
-                                if (tmpMesh.isReadable)
-                                    tmpMesh.GetVertices(rVertices);
+                                if (executionOptions.VertexCache is { IgnoreSkinnedRenders: false } &&
+                                    executionOptions.VertexCache.TryGetValue(mesh, out var cached))
+                                {
+                                    logEvent?.Invoke(LogType.Warning,
+                                        () => $"Cache hit {path}/{target.name} renderer {renderer.GetType().Name}");
+                                    rVertices.AddRange(cached);
+                                }
                                 else
-                                    tmpMesh.GetNonReadableVertices(rVertices);
+                                {
+                                    var tmpMesh = new Mesh();
 
-                                Object.Destroy(tmpMesh);
-                                if (executionOptions.VertexCache != null)
-                                    executionOptions.VertexCache[mesh] = rVertices.ToArray();
+                                    skinnedMeshRenderer.BakeMesh(tmpMesh, true);
+
+                                    if (tmpMesh.isReadable)
+                                        tmpMesh.GetVertices(rVertices);
+                                    else
+                                        tmpMesh.GetNonReadableVertices(rVertices);
+
+                                    Object.Destroy(tmpMesh);
+                                    if (executionOptions.VertexCache != null)
+                                        executionOptions.VertexCache[mesh] = rVertices.ToArray();
+                                }
+
+                                break;
                             }
-
-                            break;
-                        }
-                        case MeshRenderer:
-                        {
-                            var filter = renderer.GetComponent<MeshFilter>();
-                            if (filter == null)
+                            case MeshRenderer:
                             {
-                                logEvent?.Invoke(LogType.Warning,
-                                    () => $"{renderer.GetType()} in {path} is missing a MeshFilter");
-                                continue;
-                            }
+                                var filter = renderer.GetComponent<MeshFilter>();
+                                if (filter == null)
+                                {
+                                    logEvent?.Invoke(LogType.Warning,
+                                        () => $"{renderer.GetType()} in {path} is missing a MeshFilter");
+                                    continue;
+                                }
 
-                            var mesh = filter.sharedMesh;
+                                var mesh = filter.sharedMesh;
 
-                            if (mesh == null)
-                            {
-                                logEvent?.Invoke(LogType.Warning,
-                                    () => $"{renderer.GetType()} in {path} is missing a mesh");
-                                continue;
-                            }
+                                if (mesh == null)
+                                {
+                                    logEvent?.Invoke(LogType.Warning,
+                                        () => $"{renderer.GetType()} in {path} is missing a mesh");
+                                    continue;
+                                }
 
-                            if (executionOptions.VertexCache != null &&
-                                executionOptions.VertexCache.TryGetValue(mesh, out var cached))
-                            {
-                                logEvent?.Invoke(LogType.Log,
-                                    () => $"Cache hit {path}/{target.name} renderer {renderer.GetType().Name}");
-                                rVertices.AddRange(cached);
-                            }
-                            else
-                            {
-                                if (mesh.isReadable)
-                                    mesh.GetVertices(rVertices);
+                                if (executionOptions.VertexCache != null &&
+                                    executionOptions.VertexCache.TryGetValue(mesh, out var cached))
+                                {
+                                    logEvent?.Invoke(LogType.Log,
+                                        () => $"Cache hit {path}/{target.name} renderer {renderer.GetType().Name}");
+                                    rVertices.AddRange(cached);
+                                }
                                 else
-                                    mesh.GetNonReadableVertices(rVertices);
+                                {
+                                    if (mesh.isReadable)
+                                        mesh.GetVertices(rVertices);
+                                    else
+                                        mesh.GetNonReadableVertices(rVertices);
 
-                                if (executionOptions.VertexCache != null)
-                                    executionOptions.VertexCache[mesh] = rVertices.ToArray();
+                                    if (executionOptions.VertexCache != null)
+                                        executionOptions.VertexCache[mesh] = rVertices.ToArray();
+                                }
+
+                                break;
                             }
+                            case ParticleSystemRenderer:
+                                break;
+                            default:
+                            {
+                                var bounds = renderer.bounds;
+                                rVertices.Add(bounds.min);
+                                rVertices.Add(new Vector3(bounds.min.x, bounds.min.y, bounds.max.z));
+                                rVertices.Add(new Vector3(bounds.min.x, bounds.max.y, bounds.max.z));
+                                rVertices.Add(new Vector3(bounds.max.x, bounds.min.y, bounds.max.z));
+                                rVertices.Add(new Vector3(bounds.max.x, bounds.min.y, bounds.min.z));
+                                rVertices.Add(new Vector3(bounds.max.x, bounds.max.y, bounds.min.z));
+                                rVertices.Add(bounds.max);
+                                break;
+                            }
+                        }
 
-                            break;
-                        }
-                        case ParticleSystemRenderer:
-                            break;
-                        default:
-                        {
-                            var bounds = renderer.bounds;
-                            rVertices.Add(bounds.min);
-                            rVertices.Add(new Vector3(bounds.min.x, bounds.min.y, bounds.max.z));
-                            rVertices.Add(new Vector3(bounds.min.x, bounds.max.y, bounds.max.z));
-                            rVertices.Add(new Vector3(bounds.max.x, bounds.min.y, bounds.max.z));
-                            rVertices.Add(new Vector3(bounds.max.x, bounds.min.y, bounds.min.z));
-                            rVertices.Add(new Vector3(bounds.max.x, bounds.max.y, bounds.min.z));
-                            rVertices.Add(bounds.max);
-                            break;
-                        }
+                        logEvent?.Invoke(LogType.Log,
+                            () =>
+                                $"Processing {path}/{target.name} renderer {renderer.GetType().Name} {logFunc?.Invoke(rVertices)}");
+
+                        vertexes.AddRange(rVertices);
                     }
-
-                    logEvent?.Invoke(LogType.Log,
-                        () =>
-                            $"Processing {path}/{target.name} renderer {renderer.GetType().Name} {logFunc?.Invoke(rVertices)}");
-
-                    vertexes.AddRange(rVertices);
-                }
+            }
 
             foreach (Transform child in target.transform)
             {
