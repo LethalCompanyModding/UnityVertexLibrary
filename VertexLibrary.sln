@@ -1,6 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VertexLibrary", "VertexLibrary.csproj", "{41C3D804-588B-48E6-841E-4F58E28D43EC}"
+# 
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B0F087EC-C74F-4AB1-8FEC-A8ADC3B6CC75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VertexLibrary", "src\VertexLibrary\VertexLibrary.csproj", "{F5E25350-28B6-4E21-9BDA-5EDA15E29843}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +13,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{41C3D804-588B-48E6-841E-4F58E28D43EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{41C3D804-588B-48E6-841E-4F58E28D43EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{41C3D804-588B-48E6-841E-4F58E28D43EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{41C3D804-588B-48E6-841E-4F58E28D43EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5E25350-28B6-4E21-9BDA-5EDA15E29843}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5E25350-28B6-4E21-9BDA-5EDA15E29843}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5E25350-28B6-4E21-9BDA-5EDA15E29843}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5E25350-28B6-4E21-9BDA-5EDA15E29843}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F5E25350-28B6-4E21-9BDA-5EDA15E29843} = {B0F087EC-C74F-4AB1-8FEC-A8ADC3B6CC75}
 	EndGlobalSection
 EndGlobal
