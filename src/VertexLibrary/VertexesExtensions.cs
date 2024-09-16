@@ -45,7 +45,7 @@ public static class VertexesExtensions
     public static IVertexCache GlobalPartialCache { get; } = GlobalCache.AsPartial();
     /// <summary>
     /// </summary>
-    public static event Action<LogType, Func<string>> logEvent;
+    public static event Action<LogType, Func<string>>? logEvent;
 
     // GameObject Extensions
 
@@ -136,7 +136,7 @@ public static class VertexesExtensions
     }
 
     //Transform Extensions
-    
+
     /// <summary>
     /// Finds the oriented bounding box (OOBB) of the specified GameObject.
     /// Optionally uses the <see cref="ExecutionOptions.OverrideMatrix"/> to translate the result.
@@ -217,7 +217,7 @@ public static class VertexesExtensions
             logEvent -= executionOptions.LogHandler;
         }
     }
-    
+
     /// <summary>
     /// Tries to find the axis-aligned bounding box (AABB) of the specified GameObject.
     /// The <see cref="ExecutionOptions.OverrideMatrix"/> will be ignored in this calculation.
@@ -232,7 +232,7 @@ public static class VertexesExtensions
         bounds = GetWorldBounds(target, executionOptions);
         return bounds != default;
     }
-    
+
     /// <summary>
     /// Computes the largest distance from the bounding box center for the specified GameObject.
     /// The <see cref="ExecutionOptions.OverrideMatrix"/> will be ignored in this calculation.
@@ -302,7 +302,7 @@ public static class VertexesExtensions
             logEvent -= executionOptions.LogHandler;
         }
     }
-    
+
     /// <summary>
     /// Pre-fills the cache with vertex data from the specified GameObject using the given <see cref="ExecutionOptions.VertexCache"/>.
     /// </summary>
@@ -357,7 +357,7 @@ public static class VertexesExtensions
 
 
     //INTERNAL
-    
+
     private static void GetChildVertexes(this Transform target, List<Vector3> outVertices, Matrix4x4 localMatrix,
         string path, ExecutionOptions executionOptions, Func<List<Vector3>, string> logFunc)
     {
@@ -386,93 +386,93 @@ public static class VertexesExtensions
                         switch (renderer)
                         {
                             case SkinnedMeshRenderer skinnedMeshRenderer:
-                            {
-                                var mesh = skinnedMeshRenderer.sharedMesh;
-                                if (mesh == null)
                                 {
-                                    logEvent?.Invoke(LogType.Warning,
-                                        () => $"{renderer.GetType()} in {path} is missing a mesh");
-                                    continue;
-                                }
+                                    var mesh = skinnedMeshRenderer.sharedMesh;
+                                    if (mesh == null)
+                                    {
+                                        logEvent?.Invoke(LogType.Warning,
+                                            () => $"{renderer.GetType()} in {path} is missing a mesh");
+                                        continue;
+                                    }
 
-                                if (executionOptions.VertexCache is { IgnoreSkinnedRenders: false } &&
-                                    executionOptions.VertexCache.TryGetValue(mesh, out var cached))
-                                {
-                                    logEvent?.Invoke(LogType.Warning,
-                                        () => $"Cache hit {path}/{target.name} renderer {renderer.GetType().Name}");
-                                    rVertices.AddRange(cached);
-                                }
-                                else
-                                {
-                                    var tmpMesh = new Mesh();
-
-                                    skinnedMeshRenderer.BakeMesh(tmpMesh, true);
-
-                                    if (tmpMesh.isReadable)
-                                        tmpMesh.GetVertices(rVertices);
+                                    if (executionOptions.VertexCache is { IgnoreSkinnedRenders: false } &&
+                                        executionOptions.VertexCache.TryGetValue(mesh, out var cached))
+                                    {
+                                        logEvent?.Invoke(LogType.Warning,
+                                            () => $"Cache hit {path}/{target.name} renderer {renderer.GetType().Name}");
+                                        rVertices.AddRange(cached);
+                                    }
                                     else
-                                        tmpMesh.GetNonReadableVertices(rVertices);
+                                    {
+                                        var tmpMesh = new Mesh();
 
-                                    Object.Destroy(tmpMesh);
-                                    if (executionOptions.VertexCache != null)
-                                        executionOptions.VertexCache[mesh] = rVertices.ToArray();
+                                        skinnedMeshRenderer.BakeMesh(tmpMesh, true);
+
+                                        if (tmpMesh.isReadable)
+                                            tmpMesh.GetVertices(rVertices);
+                                        else
+                                            tmpMesh.GetNonReadableVertices(rVertices);
+
+                                        Object.Destroy(tmpMesh);
+                                        if (executionOptions.VertexCache != null)
+                                            executionOptions.VertexCache[mesh] = rVertices.ToArray();
+                                    }
+
+                                    break;
                                 }
-
-                                break;
-                            }
                             case MeshRenderer:
-                            {
-                                var filter = renderer.GetComponent<MeshFilter>();
-                                if (filter == null)
                                 {
-                                    logEvent?.Invoke(LogType.Warning,
-                                        () => $"{renderer.GetType()} in {path} is missing a MeshFilter");
-                                    continue;
-                                }
+                                    var filter = renderer.GetComponent<MeshFilter>();
+                                    if (filter == null)
+                                    {
+                                        logEvent?.Invoke(LogType.Warning,
+                                            () => $"{renderer.GetType()} in {path} is missing a MeshFilter");
+                                        continue;
+                                    }
 
-                                var mesh = filter.sharedMesh;
+                                    var mesh = filter.sharedMesh;
 
-                                if (mesh == null)
-                                {
-                                    logEvent?.Invoke(LogType.Warning,
-                                        () => $"{renderer.GetType()} in {path} is missing a mesh");
-                                    continue;
-                                }
+                                    if (mesh == null)
+                                    {
+                                        logEvent?.Invoke(LogType.Warning,
+                                            () => $"{renderer.GetType()} in {path} is missing a mesh");
+                                        continue;
+                                    }
 
-                                if (executionOptions.VertexCache != null &&
-                                    executionOptions.VertexCache.TryGetValue(mesh, out var cached))
-                                {
-                                    logEvent?.Invoke(LogType.Debug3,
-                                        () => $"Cache hit {path}/{target.name} renderer {renderer.GetType().Name}");
-                                    rVertices.AddRange(cached);
-                                }
-                                else
-                                {
-                                    if (mesh.isReadable)
-                                        mesh.GetVertices(rVertices);
+                                    if (executionOptions.VertexCache != null &&
+                                        executionOptions.VertexCache.TryGetValue(mesh, out var cached))
+                                    {
+                                        logEvent?.Invoke(LogType.Debug3,
+                                            () => $"Cache hit {path}/{target.name} renderer {renderer.GetType().Name}");
+                                        rVertices.AddRange(cached);
+                                    }
                                     else
-                                        mesh.GetNonReadableVertices(rVertices);
+                                    {
+                                        if (mesh.isReadable)
+                                            mesh.GetVertices(rVertices);
+                                        else
+                                            mesh.GetNonReadableVertices(rVertices);
 
-                                    if (executionOptions.VertexCache != null)
-                                        executionOptions.VertexCache[mesh] = rVertices.ToArray();
+                                        if (executionOptions.VertexCache != null)
+                                            executionOptions.VertexCache[mesh] = rVertices.ToArray();
+                                    }
+
+                                    break;
                                 }
-
-                                break;
-                            }
                             case ParticleSystemRenderer:
                                 break;
                             default:
-                            {
-                                var bounds = renderer.bounds;
-                                rVertices.Add(bounds.min);
-                                rVertices.Add(new Vector3(bounds.min.x, bounds.min.y, bounds.max.z));
-                                rVertices.Add(new Vector3(bounds.min.x, bounds.max.y, bounds.max.z));
-                                rVertices.Add(new Vector3(bounds.max.x, bounds.min.y, bounds.max.z));
-                                rVertices.Add(new Vector3(bounds.max.x, bounds.min.y, bounds.min.z));
-                                rVertices.Add(new Vector3(bounds.max.x, bounds.max.y, bounds.min.z));
-                                rVertices.Add(bounds.max);
-                                break;
-                            }
+                                {
+                                    var bounds = renderer.bounds;
+                                    rVertices.Add(bounds.min);
+                                    rVertices.Add(new Vector3(bounds.min.x, bounds.min.y, bounds.max.z));
+                                    rVertices.Add(new Vector3(bounds.min.x, bounds.max.y, bounds.max.z));
+                                    rVertices.Add(new Vector3(bounds.max.x, bounds.min.y, bounds.max.z));
+                                    rVertices.Add(new Vector3(bounds.max.x, bounds.min.y, bounds.min.z));
+                                    rVertices.Add(new Vector3(bounds.max.x, bounds.max.y, bounds.min.z));
+                                    rVertices.Add(bounds.max);
+                                    break;
+                                }
                         }
 
                         logEvent?.Invoke(LogType.Debug1,
@@ -504,8 +504,8 @@ public static class VertexesExtensions
         logEvent?.Invoke(LogType.Debug1, () => $"Completed {path}/{target.name} {logFunc?.Invoke(outVertices)}");
     }
 
-    
-    
+
+
     private static void CacheChildVertexes(this Transform target, string path, ExecutionOptions executionOptions)
     {
         logEvent?.Invoke(LogType.Debug1, () => $"Caching {path}/{target.name}");
@@ -524,58 +524,58 @@ public static class VertexesExtensions
             switch (renderer)
             {
                 case SkinnedMeshRenderer skinnedMeshRenderer:
-                {
-                    var mesh = skinnedMeshRenderer.sharedMesh;
-                    if (mesh == null)
                     {
-                        logEvent?.Invoke(LogType.Warning, () => $"{renderer.GetType()} in {path} is missing a mesh");
-                        continue;
+                        var mesh = skinnedMeshRenderer.sharedMesh;
+                        if (mesh == null)
+                        {
+                            logEvent?.Invoke(LogType.Warning, () => $"{renderer.GetType()} in {path} is missing a mesh");
+                            continue;
+                        }
+
+                        if (!executionOptions.VertexCache.Cache.ContainsKey(mesh))
+                        {
+                            var tmpMesh = new Mesh();
+
+                            skinnedMeshRenderer.BakeMesh(tmpMesh, true);
+
+                            if (tmpMesh.isReadable)
+                                tmpMesh.CacheVertices(executionOptions, mesh);
+                            else
+                                tmpMesh.CacheNonReadableVertices(executionOptions, mesh);
+
+                            Object.Destroy(tmpMesh);
+                        }
+
+                        break;
                     }
-
-                    if (!executionOptions.VertexCache.Cache.ContainsKey(mesh))
-                    {
-                        var tmpMesh = new Mesh();
-
-                        skinnedMeshRenderer.BakeMesh(tmpMesh, true);
-
-                        if (tmpMesh.isReadable)
-                            tmpMesh.CacheVertices(executionOptions, mesh);
-                        else
-                            tmpMesh.CacheNonReadableVertices(executionOptions, mesh);
-
-                        Object.Destroy(tmpMesh);
-                    }
-
-                    break;
-                }
                 case MeshRenderer:
-                {
-                    var filter = renderer.GetComponent<MeshFilter>();
-                    if (filter == null)
                     {
-                        logEvent?.Invoke(LogType.Warning,
-                            () => $"{renderer.GetType()} in {path} is missing a MeshFilter");
-                        continue;
+                        var filter = renderer.GetComponent<MeshFilter>();
+                        if (filter == null)
+                        {
+                            logEvent?.Invoke(LogType.Warning,
+                                () => $"{renderer.GetType()} in {path} is missing a MeshFilter");
+                            continue;
+                        }
+
+                        var mesh = filter.sharedMesh;
+
+                        if (mesh == null)
+                        {
+                            logEvent?.Invoke(LogType.Warning, () => $"{renderer.GetType()} in {path} is missing a mesh");
+                            continue;
+                        }
+
+                        if (!executionOptions.VertexCache.Cache.ContainsKey(mesh))
+                        {
+                            if (mesh.isReadable)
+                                mesh.CacheVertices(executionOptions);
+                            else
+                                mesh.CacheNonReadableVertices(executionOptions);
+                        }
+
+                        break;
                     }
-
-                    var mesh = filter.sharedMesh;
-
-                    if (mesh == null)
-                    {
-                        logEvent?.Invoke(LogType.Warning, () => $"{renderer.GetType()} in {path} is missing a mesh");
-                        continue;
-                    }
-
-                    if (!executionOptions.VertexCache.Cache.ContainsKey(mesh))
-                    {
-                        if (mesh.isReadable)
-                            mesh.CacheVertices(executionOptions);
-                        else
-                            mesh.CacheNonReadableVertices(executionOptions);
-                    }
-
-                    break;
-                }
                 case ParticleSystemRenderer:
                     break;
             }
@@ -588,8 +588,8 @@ public static class VertexesExtensions
         }
     }
 
-    
-    
+
+
     private static void GetNonReadableVertices(this Mesh nonReadableMesh, List<Vector3> vertexes)
     {
         Mesh meshCopy = new();
@@ -621,10 +621,10 @@ public static class VertexesExtensions
         Object.Destroy(meshCopy);
     }
 
-    
-    
+
+
     private static void CacheNonReadableVertices(this Mesh nonReadableMesh, ExecutionOptions executionOptions,
-        Mesh cacheKey = null)
+        Mesh? cacheKey = null)
     {
         if (executionOptions.VertexCache.ContainsKey(nonReadableMesh))
             return;
@@ -664,7 +664,7 @@ public static class VertexesExtensions
         }
     }
 
-    private static void CacheVertices(this Mesh readableMesh, ExecutionOptions executionOptions, Mesh cacheKey = null)
+    private static void CacheVertices(this Mesh readableMesh, ExecutionOptions executionOptions, Mesh? cacheKey = null)
     {
         if (executionOptions.VertexCache.ContainsKey(readableMesh))
             return;
