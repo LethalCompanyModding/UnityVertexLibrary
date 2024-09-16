@@ -33,12 +33,13 @@ public struct ExecutionOptions
     /// <summary>
     /// </summary>
     public ExecutionOptions()
-    {}
+    { }
 
     /// <summary>
     /// Function to process logs from the library.
     /// </summary>
-    public Action<LogType, Func<string>> LogHandler { get; set; } = null;
+    public Action<LogType, Func<string>> LogHandler { get; set; } = null!;
+    //This is intentionally set as null (Robyn)
 
     /// <summary>
     /// Culling mask used to filter out Renderers
@@ -49,12 +50,12 @@ public struct ExecutionOptions
     /// Set of Unity component types that, if present on a GameObject, will cause it to be skipped.
     /// </summary>
     public ISet<Type> FilteredComponents { get; set; } = new HashSet<Type>();
-    
+
     /// <summary>
     /// Translation matrix to be used to convert the vertexes from local space
     /// </summary>
     public Matrix4x4 OverrideMatrix { get; set; } = Matrix4x4.identity;
-    
+
     /// <summary>
     /// Cache used to speed up computation. If <value>null</value> no cache will be used.
     /// </summary>
