@@ -11,15 +11,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BepInEx.Core" Version="5.4.21"/>
+        <PackageReference Include="BepInEx.Core" Version="5.4.21" />
+        <PackageReference
+            Include="UnityEngine.Modules"
+            IncludeAssets="compile"
+            Version="2023.2.4"
+        />
     </ItemGroup>
-    
-    <ItemGroup>
+
+    <!--<ItemGroup>
         <Reference Include="$(SolutionDir)\Dependencies\Unity.Collections.dll" Private="False"/>
         <Reference Include="$(SolutionDir)\Dependencies\UnityEngine.dll" Private="False"/>
         <Reference Include="$(SolutionDir)\Dependencies\UnityEngine.CoreModule.dll" Private="False"/>
-        <Reference Include="$(SolutionDir)\Dependencies\UnityEngine.ParticleSystemModule.dll" Private="False"/>
-    </ItemGroup>
+        <Reference Include="$(SolutionDir)\Dependencies\UnityEngine.ParticleSystemModule.dll"
+    Private="False"/>
+    </ItemGroup>-->
 
     <PropertyGroup>
         <DebugSymbols>true</DebugSymbols>
