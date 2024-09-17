@@ -28,6 +28,7 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 using VertexLibrary.Caches;
 using Object = UnityEngine.Object;
 
@@ -56,7 +57,7 @@ public static class VertexesExtensions
     /// <param name="target">The GameObject to process.</param>
     /// <param name="executionOptions">Optional modifiers for the computation.</param>
     /// <returns>The bounding box encapsulating the object.</returns>
-    public static Bounds GetBounds(this GameObject target, ExecutionOptions executionOptions = default)
+    public static Bounds? GetBounds(this GameObject target, ExecutionOptions executionOptions = default)
     {
         return GetBounds(target.transform, executionOptions);
     }
@@ -82,7 +83,7 @@ public static class VertexesExtensions
     /// <param name="target">The GameObject to process.</param>
     /// <param name="executionOptions">Optional modifiers for the computation.</param>
     /// <returns>The axis-aligned bounding box encapsulating the object.</returns>
-    public static Bounds GetWorldBounds(this GameObject target, ExecutionOptions executionOptions = default)
+    public static Bounds? GetWorldBounds(this GameObject target, ExecutionOptions executionOptions = default)
     {
         return GetWorldBounds(target.transform, executionOptions);
     }
@@ -144,7 +145,7 @@ public static class VertexesExtensions
     /// <param name="target">The Transform to process.</param>
     /// <param name="executionOptions">Optional modifiers for the computation.</param>
     /// <returns>The bounding box encapsulating the object.</returns>
-    public static Bounds GetBounds(this Transform target, ExecutionOptions executionOptions = default)
+    public static Bounds? GetBounds(this Transform target, ExecutionOptions executionOptions = default)
     {
         logEvent += executionOptions.LogHandler;
         try
@@ -152,7 +153,7 @@ public static class VertexesExtensions
             string Logfunc(List<Vector3> vertexes)
             {
                 var bounds = GetBounds(vertexes);
-                return bounds == default ? "" : $"{bounds} Min {bounds.min} Max {bounds.max}";
+                return bounds.HasValue ? $"{bounds.Value} Min {bounds.Value.min} Max {bounds.Value.max}" : "";
             }
 
             var vertexes = ListPool<Vector3>.Get();
@@ -181,8 +182,11 @@ public static class VertexesExtensions
     public static bool TryGetBounds(this Transform target, out Bounds bounds,
         ExecutionOptions executionOptions = default)
     {
-        bounds = GetBounds(target, executionOptions);
-        return bounds != default;
+        bounds = default;
+        var nullableBounds = GetBounds(target, executionOptions);
+        if (nullableBounds.HasValue)
+            bounds = nullableBounds.Value;
+        return nullableBounds.HasValue;
     }
 
     /// <summary>
@@ -192,7 +196,7 @@ public static class VertexesExtensions
     /// <param name="target">The Transform to process.</param>
     /// <param name="executionOptions">Optional modifiers for the computation.</param>
     /// <returns>The axis-aligned bounding box encapsulating the object.</returns>
-    public static Bounds GetWorldBounds(this Transform target, ExecutionOptions executionOptions = default)
+    public static Bounds? GetWorldBounds(this Transform target, ExecutionOptions executionOptions = default)
     {
         logEvent += executionOptions.LogHandler;
         try
@@ -200,7 +204,7 @@ public static class VertexesExtensions
             string Logfunc(List<Vector3> vertexes)
             {
                 var bounds = GetBounds(vertexes);
-                return bounds == default ? "" : $"{bounds} Min {bounds.min} Max {bounds.max}";
+                return bounds.HasValue ? $"{bounds.Value} Min {bounds.Value.min} Max {bounds.Value.max}" : "";
             }
 
             var vertexes = ListPool<Vector3>.Get();
@@ -229,8 +233,11 @@ public static class VertexesExtensions
     public static bool TryGetWorldBounds(this Transform target, out Bounds bounds,
         ExecutionOptions executionOptions = default)
     {
-        bounds = GetWorldBounds(target, executionOptions);
-        return bounds != default;
+        bounds = default;
+        var nullableBounds = GetWorldBounds(target, executionOptions);
+        if (nullableBounds.HasValue)
+            bounds = nullableBounds.Value;
+        return nullableBounds.HasValue;
     }
 
     /// <summary>
@@ -248,7 +255,7 @@ public static class VertexesExtensions
             string Logfunc(List<Vector3> vertexes)
             {
                 var bounds = GetBounds(vertexes);
-                return bounds == default ? "Radius: 0" : $"{bounds} Min {bounds.min} Max {bounds.max} Radius: {GetFarthestPoint(vertexes, bounds.center)}";
+                return bounds.HasValue? $"{bounds.Value} Min {bounds.Value.min} Max {bounds.Value.max} Radius: {GetFarthestPoint(vertexes, bounds.Value.center)}" : "Radius: 0";
             }
 
             var vertexes = ListPool<Vector3>.Get();
@@ -257,8 +264,8 @@ public static class VertexesExtensions
             target.GetChildVertexes(vertexes, localMatrix, "", executionOptions, Logfunc);
 
             var bounds = GetBounds(vertexes);
-
-            var (_, radius) = GetFarthestPoint(vertexes, bounds.center);
+            
+            var (_, radius) = GetFarthestPoint(vertexes, bounds?.center ?? Vector3.zero);
 
             ListPool<Vector3>.Release(vertexes);
 
@@ -285,7 +292,7 @@ public static class VertexesExtensions
             string Logfunc(List<Vector3> vertexes)
             {
                 var bounds = GetBounds(vertexes);
-                return bounds == default ? "" : $"{bounds} Min {bounds.min} Max {bounds.max}";
+                return bounds.HasValue ? $"{bounds.Value} Min {bounds.Value.min} Max {bounds.Value.max}" : "";
             }
 
             var vertexes = ListPool<Vector3>.Get();
@@ -323,11 +330,16 @@ public static class VertexesExtensions
     /// </summary>
     /// <param name="vertexes">The collection of vertices to encapsulate.</param>
     /// <returns>The bounding box that encompasses all the specified vertices.</returns>
-    public static Bounds GetBounds(this IEnumerable<Vector3> vertexes)
+    public static Bounds? GetBounds(this IEnumerable<Vector3> vertexes)
     {
-        var bounds = new Bounds();
+        Bounds? bounds = null!;
         foreach (var v in vertexes)
-            bounds.Encapsulate(v);
+        {
+            if (!bounds.HasValue)
+                bounds = new Bounds(v, Vector3.zero);
+            else
+                bounds.Value.Encapsulate(v);
+        }
         return bounds;
     }
 
