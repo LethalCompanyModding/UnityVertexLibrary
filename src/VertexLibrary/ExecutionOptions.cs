@@ -49,7 +49,7 @@ public struct ExecutionOptions
     /// <summary>
     /// Set of Unity component types that, if present on a GameObject, will cause it to be skipped.
     /// </summary>
-    public ISet<Type> FilteredComponents { get; set; } = new HashSet<Type>();
+    public ISet<Type>? FilteredComponents { get; set; } = new HashSet<Type>();
 
     /// <summary>
     /// Translation matrix to be used to convert the vertexes from local space
