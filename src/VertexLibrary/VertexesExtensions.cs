@@ -332,13 +332,14 @@ public static class VertexesExtensions
     /// <returns>The bounding box that encompasses all the specified vertices.</returns>
     public static Bounds? GetBounds(this IEnumerable<Vector3> vertexes)
     {
-        Bounds? bounds = null!;
-        foreach (var v in vertexes)
+        using var enumerator = vertexes.GetEnumerator();
+        if (!enumerator.MoveNext())
+            return null;
+        
+        var bounds = new Bounds(enumerator.Current, Vector3.zero);
+        while (enumerator.MoveNext())
         {
-            if (!bounds.HasValue)
-                bounds = new Bounds(v, Vector3.zero);
-            else
-                bounds.Value.Encapsulate(v);
+            bounds.Encapsulate(enumerator.Current);
         }
         return bounds;
     }
