@@ -219,6 +219,7 @@ node_modules/
 
 # JetBrains Rider
 *.sln.iml
+.idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/csharp
 
