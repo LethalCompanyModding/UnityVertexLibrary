@@ -5,7 +5,7 @@
 [package]
     #Edit this in the CSPROJ instead, the workflow will automate copying
     #it here for you
-    description="Provides extension methods for obtaining the oriented bounding box (OOBB) of Unity objects."
+    description="Provides extension methods for obtaining the oriented bounding box (OBB) of Unity objects."
 
     #Change this to true if your mod has any NSFW content. Please follow the rules
     #on image and text content on your listing or your package may be removed
