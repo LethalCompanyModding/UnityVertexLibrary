@@ -1,6 +1,6 @@
 ﻿/*
  * VertexLibrary: Provides extension methods for obtaining
- * the oriented bounding box (OOBB) of Unity objects.
+ * the oriented bounding box (OBB) of Unity objects.
  * Copyright (C) 2024 mattymatty97 (GitHub)
  *
  * This library is free software; you can redistribute it and/or

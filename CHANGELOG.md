@@ -1,3 +1,4 @@
 # Changelog
 
-Todo: This
+## v1.0.0:
+- Release!
