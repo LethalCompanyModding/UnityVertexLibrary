@@ -3,7 +3,7 @@
     <PropertyGroup>
         <AssemblyName>com.github.lethalcompanymodding.vertexlibrary</AssemblyName>
         <Product>VertexLibrary</Product>
-        <Version>1.0.0</Version>
+        <Version>1.1.0</Version>
         <PackageLicenseExpression>LGPL-2.1+</PackageLicenseExpression>
         <TargetFramework>netstandard2.1</TargetFramework>
         <LangVersion>latest</LangVersion>
