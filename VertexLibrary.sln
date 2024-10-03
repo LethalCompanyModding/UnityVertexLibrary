@@ -3,25 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # 
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B0F087EC-C74F-4AB1-8FEC-A8ADC3B6CC75}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VertexLibrary", "src\VertexLibrary\VertexLibrary.csproj", "{F5E25350-28B6-4E21-9BDA-5EDA15E29843}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VertexLibrary", "VertexLibrary\VertexLibrary.csproj", "{F5E25350-28B6-4E21-9BDA-5EDA15E29843}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F5E25350-28B6-4E21-9BDA-5EDA15E29843}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5E25350-28B6-4E21-9BDA-5EDA15E29843}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5E25350-28B6-4E21-9BDA-5EDA15E29843}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5E25350-28B6-4E21-9BDA-5EDA15E29843}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{F5E25350-28B6-4E21-9BDA-5EDA15E29843} = {B0F087EC-C74F-4AB1-8FEC-A8ADC3B6CC75}
 	EndGlobalSection
 EndGlobal
