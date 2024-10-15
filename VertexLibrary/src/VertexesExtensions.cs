@@ -435,6 +435,11 @@ public static class VertexesExtensions
                                     if (executionOptions.VertexCache != null)
                                         executionOptions.VertexCache[mesh] = rVertices.ToArray();
                                 }
+                                
+                                logEvent?.Invoke(LogType.Debug1,
+                                    () =>
+                                        $"Processing {path}/{target.name} renderer {renderer.GetType().Name} {logFunc?.Invoke(rVertices.ToList())}");
+
 
                                 break;
                             }
